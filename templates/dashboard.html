@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsCurating - 크롤링 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 24px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #f1f5f9;
+        }
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+        .card-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .card-value.green { color: #4ade80; }
+        .card-value.red { color: #f87171; }
+        .card-value.blue { color: #60a5fa; }
+        .card-value.yellow { color: #fbbf24; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .chart-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+        .chart-container h2 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: #f1f5f9;
+        }
+        canvas { max-height: 300px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #334155;
+        }
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #1e293b;
+        }
+        tr:hover td { background: #1e293b; }
+        .badge {
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-youtube { background: #7f1d1d; color: #fca5a5; }
+        .badge-web { background: #1e3a5f; color: #93c5fd; }
+        .table-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+            overflow-x: auto;
+        }
+        .table-container h2 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: #f1f5f9;
+        }
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            color: #475569;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>NewsCurating 크롤링 대시보드</h1>
+    <p class="subtitle">크롤링 성능 메트릭 추이 ($metrics_count회 실행 기록)</p>
+
+    <div class="summary-cards">
+        <div class="card">
+            <div class="card-label">최근 전체 소요시간</div>
+            <div class="card-value blue">${latest_total_duration}s</div>
+        </div>
+        <div class="card">
+            <div class="card-label">웹 크롤링 성공률</div>
+            <div class="card-value green">${web_success_pct}%</div>
+        </div>
+        <div class="card">
+            <div class="card-label">유튜브 성공률</div>
+            <div class="card-value red">${yt_success_pct}%</div>
+        </div>
+        <div class="card">
+            <div class="card-label">수집 기사 수</div>
+            <div class="card-value yellow">$latest_article_count</div>
+        </div>
+        <div class="card">
+            <div class="card-label">병목 구간</div>
+            <div class="card-value red">$latest_bottleneck</div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-container">
+            <h2>크롤링 시간 추이 (초)</h2>
+            <canvas id="durationChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>성공률 추이 (%)</h2>
+            <canvas id="successChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Phase별 소요시간</h2>
+            <canvas id="phaseChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>병목 비율 (웹 vs 유튜브)</h2>
+            <canvas id="bottleneckChart"></canvas>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h2>실행 기록</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>날짜</th>
+                    <th>전체 소요</th>
+                    <th>Phase 1</th>
+                    <th>웹 크롤링</th>
+                    <th>유튜브</th>
+                    <th>웹 성공</th>
+                    <th>유튜브 성공</th>
+                    <th>기사 수</th>
+                    <th>병목</th>
+                </tr>
+            </thead>
+            <tbody>$table_rows
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        NewsCurating 크롤링 대시보드 &mdash; 자동 생성
+    </div>
+
+    <script>
+        const dates = $dates_json;
+        const chartDefaults = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#94a3b8' }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#64748b' },
+                    grid: { color: '#1e293b' }
+                },
+                y: {
+                    ticks: { color: '#64748b' },
+                    grid: { color: '#1e293b' }
+                }
+            }
+        };
+
+        // 1. 크롤링 시간 추이
+        new Chart(document.getElementById('durationChart'), {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: '전체 소요',
+                        data: $total_dur_json,
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96,165,250,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: '웹 크롤링',
+                        data: $web_dur_json,
+                        borderColor: '#4ade80',
+                        tension: 0.3,
+                    },
+                    {
+                        label: '유튜브',
+                        data: $yt_dur_json,
+                        borderColor: '#f87171',
+                        tension: 0.3,
+                    },
+                ]
+            },
+            options: chartDefaults
+        });
+
+        // 2. 성공률 추이
+        new Chart(document.getElementById('successChart'), {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: '웹 성공률',
+                        data: $web_rate_json,
+                        borderColor: '#4ade80',
+                        backgroundColor: 'rgba(74,222,128,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: '유튜브 성공률',
+                        data: $yt_rate_json,
+                        borderColor: '#f87171',
+                        backgroundColor: 'rgba(248,113,113,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                ]
+            },
+            options: {
+                ...chartDefaults,
+                scales: {
+                    ...chartDefaults.scales,
+                    y: {
+                        ...chartDefaults.scales.y,
+                        min: 0,
+                        max: 100,
+                    }
+                }
+            }
+        });
+
+        // 3. Phase별 소요시간 (스택 바)
+        new Chart(document.getElementById('phaseChart'), {
+            type: 'bar',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Phase 1 (메타데이터)',
+                        data: $phase1_json,
+                        backgroundColor: '#818cf8',
+                    },
+                    {
+                        label: 'Phase 2 (본문수집)',
+                        data: $phase2_json,
+                        backgroundColor: '#38bdf8',
+                    },
+                ]
+            },
+            options: {
+                ...chartDefaults,
+                scales: {
+                    ...chartDefaults.scales,
+                    x: { ...chartDefaults.scales.x, stacked: true },
+                    y: { ...chartDefaults.scales.y, stacked: true },
+                }
+            }
+        });
+
+        // 4. 병목 비율 (최근 실행의 도넛)
+        new Chart(document.getElementById('bottleneckChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['웹 크롤링', '유튜브'],
+                datasets: [{
+                    data: [$latest_web_duration, $latest_yt_duration],
+                    backgroundColor: ['#4ade80', '#f87171'],
+                    borderColor: ['#166534', '#991b1b'],
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

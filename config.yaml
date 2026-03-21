@@ -1,0 +1,46 @@
+# NewsCurating 설정
+
+# 소스 설정: YAML 파일에서 읽음
+source: "file"
+sources_file: "sources.yaml"
+# 특정 카테고리만 대상으로 하려면 아래 목록 수정 (비워두면 전체)
+# target_categories:
+#   - Trend
+#   - Paper
+#   - 유튜브
+
+output_dir: "reports"
+crawled_dir: "data/crawled"
+
+categories:
+  - 기술
+  - 비즈니스
+  - 과학
+  - 정치
+  - 문화
+  - 기타
+
+crawl:
+  timeout: 10
+  delay: 1.5
+  max_content_length: 2000
+  max_workers: 5  # 소스별 병렬 크롤링 스레드 수
+  user_agent: "NewsCurating/1.0 (Weekly News Summary Bot)"
+  yt_workers: 5  # YouTube 병렬 수집 스레드 수
+  max_articles_per_source: 15
+  delay_factor: 0.3
+  incremental: true  # 이전 데이터와 비교하여 새 기사만 수집
+
+preprocessor:
+  dedup_threshold: 0.5
+  grouping_threshold: 0.3
+  min_title_length: 5
+  max_summary_length: 300
+
+feedback:
+  file: "feedback/weekly_feedback.md"
+
+report:
+  language: "ko"
+  css_template: "templates/report.css"
+  output_dir: "reports"

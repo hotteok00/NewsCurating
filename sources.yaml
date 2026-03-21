@@ -1,0 +1,183 @@
+# NewsCurating 소스 목록
+# enabled: false로 일시 비활성화 가능
+
+sources:
+  # ──── 뉴스 ────
+  - url: https://www.aitimes.com/news/articleList.html?view_type=sm
+    category: Trend
+    type: news
+
+  - url: https://www.aitimes.kr/
+    category: Trend
+    type: news
+
+  - url: https://www.irobotnews.com/
+    category: Trend
+    type: news
+
+  # ──── 논문 ────
+  - url: https://arxiv.org/list/cs.RO/recent?skip=0&show=50
+    category: Paper
+    type: paper
+
+  - url: https://huggingface.co/papers/2510.27688
+    category: Paper
+    type: paper
+
+  - url: https://www.alphaxiv.org/
+    category: Paper
+    type: paper
+
+  # ──── 포럼 ────
+  - url: https://discuss.pytorch.kr/c/news/14
+    category: Trend
+    type: forum
+
+  # ──── 유튜브 ────
+  - url: https://www.youtube.com/@지식인사이드/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@날리지식/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@Unrealscience/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@unrealtech/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@jipconomy/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@understanding./videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@sosumonkey/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@Turbo832TV/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@14FMBC/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@dasiworldmap/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@chester_roh/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@윤루카스/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@KLAB/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@센서스튜디오/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@김단테/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@moneydo/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@syukaworld/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@지식한입/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@기묘한밤/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@buiknam_tv/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@dangmolee/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@kpunch/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@MIGWAJANG/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@chaeboosim/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@sciprop/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@hkglobalmarket/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@아파트써처/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@we.rekindle/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@Moneygraphy/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@김성범교수산업경영공/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@irascgachon/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@딥러닝논문읽기모임/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@임커밋/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@changjoonam4065/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@dsba2979/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@KMUXAI/videos
+    category: 유튜브
+    type: youtube
+
+  - url: https://www.youtube.com/@airlab_khu/videos
+    category: 유튜브
+    type: youtube
