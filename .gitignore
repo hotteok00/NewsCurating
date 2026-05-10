@@ -2,6 +2,9 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.venv/
+venv/
+env/
 
 # 데이터/출력 (대용량, 매주 재생성)
 data/crawled/

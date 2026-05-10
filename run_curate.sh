@@ -9,9 +9,14 @@ cd "$PROJECT_DIR"
 
 mkdir -p data/crawled reports logs feedback
 
+PYTHON_BIN="${PROJECT_DIR}/.venv/bin/python"
+if [ ! -x "$PYTHON_BIN" ]; then
+  PYTHON_BIN="python3"
+fi
+
 echo "========================================="
 echo " NewsCurating - 주간 뉴스 큐레이션"
 echo " 날짜: $(date +%Y-%m-%d)"
 echo "========================================="
 
-python3 src/main.py pipeline --config config.yaml "$@"
+"$PYTHON_BIN" src/main.py pipeline --config config.yaml "$@"
